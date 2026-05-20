@@ -1,0 +1,46 @@
+[x-cloak] { display: none !important; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ── Spinner ── */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+.spinner-blue {
+  border-color: rgba(59,130,246,0.2);
+  border-top-color: #3b82f6;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Table ── */
+thead th {
+  white-space: nowrap;
+}
+
+td {
+  white-space: nowrap;
+}
+
+/* ── Status select ── */
+.status-select {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ── Responsive table scroll ── */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
