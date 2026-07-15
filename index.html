@@ -1,1021 +1,617 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SISTEM GURU BARU</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --navy:#1E2A4A;
-    --navy-deep:#141D33;
-    --paper:#F4F5F7;
-    --panel:#FFFFFF;
-    --gold:#B8935F;
-    --gold-deep:#96754A;
-    --ink:#1F2430;
-    --muted:#6B7280;
-    --line:#E3E5EA;
-    --st-belum:#B4483C;
-    --radius:10px;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:'Inter',sans-serif;
-    background:var(--paper);
-    color:var(--ink);
-  }
-  .app{
-    max-width:1180px;
-    margin:0 auto;
-    padding:32px 24px 80px;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WaGYu Sistem — SPS PAHANG</title>
 
-  /* LOGIN */
-  .login-screen{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-  }
-  .login-card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:36px 32px;
-    width:100%;
-    max-width:360px;
-    box-shadow:0 12px 34px rgba(20,29,51,0.08);
-    text-align:center;
-  }
-  .login-card .eyebrow{
-    font-size:11px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--gold-deep);
-    font-weight:600;
-    margin-bottom:8px;
-  }
-  .login-card h1{
-    font-family:'Source Serif 4',serif;
-    font-size:24px;
-    color:var(--navy-deep);
-    margin:0 0 20px;
-  }
-  .login-card input[type="password"]{
-    width:100%;
-    margin-bottom:12px;
-    text-align:center;
-  }
-  .login-card .btn{width:100%; justify-content:center;}
-  .login-error{
-    color:var(--st-belum);
-    font-size:12.5px;
-    margin-top:10px;
-    min-height:16px;
-  }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
 
-  /* HEADER */
-  .header{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    gap:24px;
-    padding-bottom:20px;
-    border-bottom:2px solid var(--navy);
-    margin-bottom:28px;
-  }
-  .header .eyebrow{
-    font-size:11px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--gold-deep);
-    font-weight:600;
-    margin-bottom:6px;
-  }
-  .header h1{
-    font-family:'Source Serif 4',serif;
-    font-size:32px;
-    font-weight:700;
-    margin:0;
-    color:var(--navy-deep);
-    letter-spacing:.01em;
-  }
-  .header .sub{
-    color:var(--muted);
-    font-size:13.5px;
-    margin-top:4px;
-  }
-  .btn{
-    border:none;
-    cursor:pointer;
-    font-family:'Inter',sans-serif;
-    font-weight:600;
-    font-size:13.5px;
-    border-radius:8px;
-    padding:11px 18px;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    transition:transform .12s ease, box-shadow .12s ease;
-  }
-  .btn:disabled{opacity:.6; cursor:not-allowed;}
-  .btn:active{transform:translateY(1px);}
-  .btn-primary{background:var(--navy); color:#fff;}
-  .btn-primary:hover{background:var(--navy-deep);}
-  .btn-gold{background:var(--gold); color:#fff;}
-  .btn-gold:hover{background:var(--gold-deep);}
-  .btn-ghost{background:transparent; color:var(--navy); border:1px solid var(--line);}
-  .btn-ghost:hover{border-color:var(--navy);}
-  .btn-sm{padding:6px 10px; font-size:12px; border-radius:6px;}
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-  /* SUMMARY CARDS */
-  .summary{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
-    gap:14px;
-    margin-bottom:28px;
-  }
-  .card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:16px 18px;
-    position:relative;
-    overflow:hidden;
-  }
-  .card::before{
-    content:"";
-    position:absolute; left:0; top:0; bottom:0; width:4px;
-    background:var(--card-accent, var(--navy));
-  }
-  .card .num{
-    font-family:'Source Serif 4',serif;
-    font-size:28px;
-    font-weight:700;
-    color:var(--navy-deep);
-    line-height:1;
-  }
-  .card .label{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:6px;
-    font-weight:500;
-  }
-
-  /* TOOLBAR */
-  .toolbar{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:16px;
-  }
-  .filters{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    flex:1;
-  }
-  input[type="text"], input[type="password"], select, input[type="date"], input[type="month"], textarea{
-    font-family:'Inter',sans-serif;
-    font-size:13.5px;
-    border:1px solid var(--line);
-    border-radius:7px;
-    padding:9px 12px;
-    background:#fff;
-    color:var(--ink);
-    outline:none;
-  }
-  input:focus, select:focus, textarea:focus{
-    border-color:var(--navy);
-    box-shadow:0 0 0 3px rgba(30,42,74,0.08);
-  }
-  .search-box{min-width:220px; flex:1;}
-  .actions-right{display:flex; gap:10px; flex-wrap:wrap;}
-
-  .table-section{margin-bottom:26px;}
-  .section-title{
-    font-family:'Source Serif 4',serif;
-    font-size:15.5px;
-    font-weight:600;
-    color:var(--navy-deep);
-    margin:0 0 10px;
-    display:flex; align-items:baseline; gap:6px;
-  }
-  .section-title span{
-    font-family:'Inter',sans-serif;
-    font-size:12px;
-    font-weight:500;
-    color:var(--muted);
-  }
-  tbody tr.row-hidden-print{opacity:0.55;}
-  .row-actions button.hide-toggle{color:var(--gold-deep);}
-  .row-actions button.hide-toggle:hover{color:var(--gold);}
-  .status-done-label{
-    display:flex; align-items:center; gap:5px;
-    font-size:12px; color:var(--muted); white-space:nowrap;
-  }
-
-  /* TABLE */
-  .table-wrap{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    overflow-x:auto;
-  }
-  table{
-    width:100%;
-    min-width:900px;
-    border-collapse:collapse;
-    font-size:13.5px;
-  }
-  thead th{
-    text-align:left;
-    font-size:11px;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    color:var(--muted);
-    font-weight:600;
-    padding:12px 14px;
-    background:#FAFAFB;
-    border-bottom:1px solid var(--line);
-    white-space:nowrap;
-  }
-  tbody td{
-    padding:13px 14px;
-    border-bottom:1px solid var(--line);
-    vertical-align:top;
-  }
-  tbody tr:last-child td{border-bottom:none;}
-  tbody tr:hover{background:#FAFAFC;}
-  .idx{
-    font-family:'Source Serif 4',serif;
-    color:var(--gold-deep);
-    font-weight:600;
-    font-variant-numeric:tabular-nums;
-  }
-  .catatan-cell{
-    max-width:200px;
-    color:var(--muted);
-    font-size:12.5px;
-    white-space:pre-wrap;
-  }
-  .badge{
-    display:inline-block;
-    padding:4px 10px;
-    border-radius:20px;
-    font-size:11.5px;
-    font-weight:600;
-    color:#fff;
-    white-space:nowrap;
-  }
-  .row-actions{white-space:nowrap;}
-  .row-actions button{
-    background:none;border:none;cursor:pointer;
-    color:var(--muted); font-size:12px; font-weight:600;
-    padding:4px 6px;
-  }
-  .row-actions button:hover{color:var(--navy);}
-  .row-actions button.danger:hover{color:var(--st-belum);}
-
-  .empty-state{
-    text-align:center;
-    padding:60px 20px;
-    color:var(--muted);
-  }
-  .empty-state .glyph{
-    font-family:'Source Serif 4',serif;
-    font-size:40px;
-    color:var(--line);
-    margin-bottom:10px;
-  }
-
-  /* MODAL */
-  .overlay{
-    position:fixed; inset:0;
-    background:rgba(20,29,51,0.45);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:100;
-    padding:20px;
-  }
-  .overlay.show{display:flex;}
-  .modal{
-    background:#fff;
-    border-radius:12px;
-    width:100%;
-    max-width:520px;
-    max-height:90vh;
-    overflow-y:auto;
-    padding:26px 28px 24px;
-    box-shadow:0 20px 50px rgba(0,0,0,0.2);
-  }
-  .modal h2{
-    font-family:'Source Serif 4',serif;
-    font-size:20px;
-    color:var(--navy-deep);
-    margin:0 0 18px;
-  }
-  .field{margin-bottom:14px;}
-  .field label{
-    display:block;
-    font-size:12px;
-    font-weight:600;
-    color:var(--muted);
-    margin-bottom:5px;
-  }
-  .field input, .field select, .field textarea{width:100%;}
-  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-  .modal-actions{
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
-    margin-top:20px;
-  }
-  .status-manage-list{
-    display:flex; flex-direction:column; gap:8px; margin-bottom:14px;
-  }
-  .status-manage-row{
-    display:flex; align-items:center; gap:8px;
-  }
-  .status-manage-row input[type="text"]{flex:1;}
-  .status-dot{width:10px; height:10px; border-radius:50%; flex-shrink:0;}
-  .add-status-row{display:flex; gap:8px; margin-top:6px;}
-  .add-status-row input{flex:1;}
-  .toast{
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
-    background:var(--navy-deep); color:#fff;
-    padding:11px 20px; border-radius:8px; font-size:13px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.2);
-    z-index:200; opacity:0; pointer-events:none;
-    transition:opacity .25s ease, transform .25s ease;
-  }
-  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
-  .loading-veil{
-    position:fixed; inset:0; background:rgba(255,255,255,0.6);
-    display:none; align-items:center; justify-content:center;
-    z-index:300; font-size:13px; color:var(--navy-deep); font-weight:600;
-  }
-  .loading-veil.show{display:flex;}
-  @media print{
-    body{background:#fff;}
-    .actions-right, .toolbar, .summary, .row-actions, .toast, .loading-veil{display:none !important;}
-    .app{max-width:100%; padding:0;}
-    .header{border-bottom:2px solid #000; margin-bottom:16px;}
-    .header h1{color:#000;}
-    .table-wrap{border:none; overflow:visible;}
-    table{min-width:0; width:100%;}
-    thead th{background:#fff; color:#000; border-bottom:1px solid #000;}
-    tbody tr:hover{background:none;}
-    .badge{color:#000 !important; background:none !important; border:1px solid currentColor; padding:2px 8px;}
-    .idx{color:#000;}
-    .row-hidden-print{display:none !important;}
-    .section-title{color:#000;}
-    @page{size:landscape; margin:14mm;}
-  }
-  @media (max-width:640px){
-    .field-row{grid-template-columns:1fr;}
-    .header{flex-direction:column; align-items:flex-start;}
-    table{min-width:900px;}
-  }
-</style>
+  <style>
+    /* ── Sistem Guru Baru (add-on) — gaya tambahan sahaja ── */
+    .gb-status-dot{ width:10px; height:10px; border-radius:9999px; display:inline-block; flex-shrink:0; }
+    .gb-badge{ display:inline-block; padding:3px 10px; border-radius:9999px; font-size:11px; font-weight:600; color:#fff; white-space:nowrap; }
+    tr.gb-row-hidden{ opacity:0.5; }
+    @media print{
+      body *{ visibility:hidden; }
+      #gbPrintArea, #gbPrintArea *{ visibility:visible; }
+      #gbPrintArea{ position:absolute; left:0; top:0; width:100%; }
+      .gb-no-print{ display:none !important; }
+    }
+  </style>
 </head>
-<body>
+<body class="bg-slate-100 min-h-screen" x-data="app()" x-cloak>
 
-<!-- LOGIN SCREEN -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div class="eyebrow">SPS &middot; JPN Pahang</div>
-    <h1>Sistem Guru Baru</h1>
-    <input type="password" id="loginPassword" placeholder="Kata laluan">
-    <button class="btn btn-primary" id="btnLogin">Log Masuk</button>
-    <div class="login-error" id="loginError"></div>
-  </div>
+  <!-- ══════════════════════════════
+       LOGIN
+  ══════════════════════════════ -->
+  <div x-show="!loggedIn" class="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-900 to-blue-400 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm">
+
+      <div class="text-center mb-6">
+        <img src="assets/img/LOGO_JPN_BLACK.png" alt="Logo JPN" class="w-20 h-20 object-contain mx-auto mb-3">
+        <h1 class="text-lg font-bold text-slate-800">WaGYu Sistem</h1>
+        <p class="text-xs text-slate-500 mt-1">JPN Pahang — SPS</p>
+      </div>
+
+      <div x-show="loginError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm" x-text="loginError"></div>
+
+      <div class="mb-4">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Kata Laluan</label>
+        <input type="password" x-model="loginPass" @keydown.enter="doLogin()"
+          class="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          placeholder="Masukkan kata laluan...">
+      </div>
+
+      <button @click="doLogin()" :disabled="loginLoading"
+        class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold rounded-lg text-sm flex items-center justify-center gap-2 transition">
+        <span x-show="loginLoading" class="spinner"></span>
+        <span x-text="loginLoading ? 'Mengesahkan...' : 'Log Masuk'"></span>
+      </button>
+<div class="mt-5 bg-yellow-400 rounded-lg px-4 py-3 text-center">
+  <p class="text-red-800 text-xs font-semibold leading-5">HANYA UNTUK KEGUNAAN DALAMAN SAHAJA</p>
+  <p class="text-red-800 text-xs font-semibold mt-1">SektorPengurusanSekolahJPNPahang©2026</p>
 </div>
-
-<!-- MAIN APP -->
-<div class="app" id="mainApp" style="display:none;">
-
-  <div class="header">
-    <div>
-      <div class="eyebrow">SPS &middot; JPN Pahang</div>
-      <h1>Sistem Guru Baru</h1>
-      <div class="sub">Dashboard pengurusan & penjejakan rekod guru baru</div>
-    </div>
-    <div class="actions-right">
-      <button class="btn btn-ghost" id="btnManageStatus">Urus Status</button>
-      <button class="btn btn-ghost" id="btnPrint">Cetak / PDF</button>
-      <button class="btn btn-gold" id="btnAdd">+ Tambah Rekod</button>
     </div>
   </div>
 
-  <div class="summary" id="summaryCards"></div>
+  <!-- ══════════════════════════════
+       MAIN APP
+  ══════════════════════════════ -->
+  <div x-show="loggedIn">
 
-  <div class="toolbar">
-    <div class="filters">
-      <input type="text" class="search-box" id="searchInput" placeholder="Cari Nama atau No. IC...">
-      <select id="filterStatus"><option value="">Semua Status</option></select>
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm gb-no-print">
+      <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+        <span class="font-bold text-slate-800 text-sm">WaGYu <span class="text-blue-600">Sistem</span></span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button @click="activeTab = 'isi'"
+            :class="activeTab === 'isi' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-100'"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+            ✏️ Isi Data
+          </button>
+          <button @click="activeTab = 'dashboard'; loadData()"
+            :class="activeTab === 'dashboard' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-100'"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+            📊 Dashboard
+          </button>
+          <button @click="activeTab = 'guru'; loadGuruBaru()"
+            :class="activeTab === 'guru' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-100'"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+            🎓 Guru Baru
+          </button>
+          <button @click="logout()"
+            class="ml-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition">
+            Keluar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════
+         TAB: ISI DATA
+    ══════════════════════════════ -->
+    <div x-show="activeTab === 'isi'" class="max-w-3xl mx-auto px-4 py-6">
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+
+        <div class="px-5 py-4 border-b border-slate-100 font-semibold text-slate-700 text-sm">➕ Tambah Rekod Baru</div>
+
+        <div class="p-5">
+
+          <div x-show="formMsg"
+            :class="formMsgType === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'"
+            class="mb-4 p-3 border rounded-lg text-sm" x-text="formMsg"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Nama Pemohon *</label>
+              <input type="text" x-model="form.namaPemohon"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+                placeholder="Nama penuh...">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">No. IC</label>
+              <input type="text" x-model="form.noIC"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+                placeholder="000000-00-0000">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">No. Permohonan</label>
+              <input type="text" x-model="form.noPer"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+                placeholder="No. Permohonan">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Kategori *</label>
+              <select x-model="form.kategori"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                <option value="">-- Pilih --</option>
+                <template x-for="k in opts.kategori" :key="k">
+                  <option :value="k" x-text="k"></option>
+                </template>
+              </select>
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">ALASAN</label>
+              <input type="text" x-model="form.jenis"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+                placeholder="Alasan permohonan">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Dari Negeri</label>
+              <input type="text" x-model="form.dari"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+                placeholder="Dari...">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Ke Negeri</label>
+              <input type="text" x-model="form.ke"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+                placeholder="Ke...">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Order By *</label>
+              <select x-model="form.orderBy"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                <option value="">-- Pilih --</option>
+                <template x-for="o in opts.orderBy" :key="o">
+                  <option :value="o" x-text="o"></option>
+                </template>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Sesi *</label>
+              <select x-model="form.sesi"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                <option value="">-- Pilih --</option>
+                <template x-for="s in opts.sesi" :key="s">
+                  <option :value="s" x-text="s"></option>
+                </template>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Tarikh Mohon</label>
+              <input type="date" x-model="form.tarikhMohon"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Status *</label>
+              <select x-model="form.status"
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                <template x-for="s in opts.status" :key="s">
+                  <option :value="s" x-text="s"></option>
+                </template>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="mt-5 flex gap-3">
+            <button @click="submitForm()" :disabled="formLoading"
+              class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold rounded-lg text-sm flex items-center gap-2 transition">
+              <span x-show="formLoading" class="spinner"></span>
+              <span x-text="formLoading ? 'Menyimpan...' : '💾 Simpan'"></span>
+            </button>
+            <button @click="resetForm()"
+              class="px-5 py-2.5 border border-slate-200 text-slate-600 font-semibold rounded-lg text-sm hover:bg-slate-50 transition">
+              Reset
+            </button>
+          </div>
+
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="table-section">
-    <h2 class="section-title">Rekod Dalam Proses <span id="countActive"></span></h2>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nama</th>
-            <th>No. IC</th>
-            <th>Tarikh Data Key In</th>
-            <th>Bulan Proses</th>
-            <th>Arahan By</th>
-            <th>Status</th>
-            <th>Catatan</th>
-            <th>Tindakan</th>
-          </tr>
-        </thead>
-        <tbody id="tableBodyActive"></tbody>
-      </table>
-      <div class="empty-state" id="emptyStateActive" style="display:none;">
-        <div class="glyph">&mdash;</div>
-        <div>Tiada rekod dalam proses.</div>
+    <!-- ══════════════════════════════
+         TAB: DASHBOARD
+    ══════════════════════════════ -->
+    <div x-show="activeTab === 'dashboard'" class="max-w-6xl mx-auto px-4 py-6">
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Jumlah</div>
+          <div class="text-3xl font-bold text-blue-600" x-text="records.length"></div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Selesai</div>
+          <div class="text-3xl font-bold text-green-600" x-text="statSelesai"></div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Dalam Proses</div>
+          <div class="text-3xl font-bold text-amber-500" x-text="statProses"></div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Menunggu</div>
+          <div class="text-3xl font-bold text-slate-500" x-text="statMenunggu"></div>
+        </div>
+      </div>
+
+      <!-- Table Card -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+
+        <!-- Filter Bar -->
+        <div class="p-4 border-b border-slate-100 flex flex-wrap gap-3">
+          <input type="text" x-model="searchQ" placeholder="🔍 Cari nama, IC, No.Per..."
+            class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-full sm:w-64">
+          <select x-model="filterStatus"
+            class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+            <option value="">Semua Status</option>
+            <template x-for="s in opts.status" :key="s">
+              <option :value="s" x-text="s"></option>
+            </template>
+          </select>
+          <select x-model="filterKategori"
+            class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+            <option value="">Semua Kategori</option>
+            <template x-for="k in opts.kategori" :key="k">
+              <option :value="k" x-text="k"></option>
+            </template>
+          </select>
+          <button @click="loadData()"
+            class="ml-auto px-4 py-2 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+            🔄 Muat Semula
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div x-show="dashLoading" class="text-center py-12">
+          <span class="spinner spinner-blue" style="width:28px;height:28px;"></span>
+          <p class="text-slate-400 text-sm mt-3">Memuatkan data...</p>
+        </div>
+
+        <!-- Table -->
+        <div x-show="!dashLoading" class="table-scroll">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wide">
+              <tr>
+                <th class="px-4 py-3 text-left">Bil</th>
+                <th class="px-4 py-3 text-left">Nama Pemohon</th>
+                <th class="px-4 py-3 text-left">No. IC</th>
+                <th class="px-4 py-3 text-left">No. Per</th>
+                <th class="px-4 py-3 text-left">Kategori</th>
+                <th class="px-4 py-3 text-left">Jenis</th>
+                <th class="px-4 py-3 text-left">Dari</th>
+                <th class="px-4 py-3 text-left">Ke</th>
+                <th class="px-4 py-3 text-left">Order By</th>
+                <th class="px-4 py-3 text-left">Sesi</th>
+                <th class="px-4 py-3 text-left">Tarikh</th>
+                <th class="px-4 py-3 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-if="filteredRecords.length === 0">
+                <tr>
+                  <td colspan="12" class="text-center py-12 text-slate-400">Tiada rekod dijumpai.</td>
+                </tr>
+              </template>
+              <template x-for="r in filteredRecords" :key="r.bil">
+                <tr class="border-t border-slate-100 hover:bg-slate-50">
+                  <td class="px-4 py-3 text-slate-500" x-text="r.bil"></td>
+                  <td class="px-4 py-3 font-medium text-slate-800" x-text="r.namaPemohon"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.noIC || '—'"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.noPer || '—'"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.kategori || '—'"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.jenis || '—'"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.dari || '—'"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.ke || '—'"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.orderBy || '—'"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.sesi || '—'"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.tarikhMohon || '—'"></td>
+                  <td class="px-4 py-3">
+                    <select x-model="r.status" @change="updateStatus(r.bil, r.status)"
+                      class="status-select px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 bg-white">
+                      <template x-for="s in opts.status" :key="s">
+                        <option :value="s" x-text="s"></option>
+                      </template>
+                    </select>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+
+        <div x-show="!dashLoading && filteredRecords.length > 0"
+          class="px-4 py-3 border-t border-slate-100 text-xs text-slate-400">
+          Menunjukkan <strong x-text="filteredRecords.length"></strong> daripada <strong x-text="records.length"></strong> rekod
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: GURU BARU (add-on)
+    ══════════════════════════════ -->
+    <div x-show="activeTab === 'guru'" class="max-w-6xl mx-auto px-4 py-6" id="gbPrintArea">
+
+      <!-- Header row -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-5 gb-no-print">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">🎓 Sistem Guru Baru</h2>
+          <p class="text-xs text-slate-500">Pengurusan & penjejakan rekod guru baru</p>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <button @click="gbShowStatusModal = true"
+            class="px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
+            ⚙️ Urus Status
+          </button>
+          <button @click="gbPrint()"
+            class="px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
+            🖨️ Cetak / PDF
+          </button>
+          <button @click="gbOpenAdd()"
+            class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition">
+            + Tambah Rekod
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5 gb-no-print">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Jumlah Rekod</div>
+          <div class="text-3xl font-bold text-blue-600" x-text="gbRecords.length"></div>
+        </div>
+        <template x-for="s in gbStatusOptions" :key="s.name">
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1" x-text="s.name"></div>
+            <div class="text-3xl font-bold" :style="`color:${s.color}`"
+              x-text="gbRecords.filter(r => r.status === s.name).length"></div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-wrap gap-3 mb-5 gb-no-print">
+        <input type="text" x-model="gbSearchQ" placeholder="🔍 Cari Nama atau No. IC..."
+          class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-full sm:w-64">
+        <select x-model="gbFilterStatus"
+          class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+          <option value="">Semua Status</option>
+          <template x-for="s in gbStatusOptions" :key="s.name">
+            <option :value="s.name" x-text="s.name"></option>
+          </template>
+        </select>
+      </div>
+
+      <!-- Loading -->
+      <div x-show="gbLoading" class="text-center py-12 gb-no-print">
+        <span class="spinner spinner-blue" style="width:28px;height:28px;"></span>
+        <p class="text-slate-400 text-sm mt-3">Memuatkan data...</p>
+      </div>
+
+      <!-- Table: Dalam Proses -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm mb-5" x-show="!gbLoading">
+        <div class="px-4 py-3 border-b border-slate-100 font-semibold text-slate-700 text-sm">
+          Rekod Dalam Proses <span class="text-slate-400 font-normal" x-text="`(${gbActiveRecords.length})`"></span>
+        </div>
+        <div class="table-scroll">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wide">
+              <tr>
+                <th class="px-4 py-3 text-left">#</th>
+                <th class="px-4 py-3 text-left">Nama</th>
+                <th class="px-4 py-3 text-left">No. IC</th>
+                <th class="px-4 py-3 text-left">Tarikh Key In</th>
+                <th class="px-4 py-3 text-left">Bulan Proses</th>
+                <th class="px-4 py-3 text-left">Arahan By</th>
+                <th class="px-4 py-3 text-left">Status</th>
+                <th class="px-4 py-3 text-left">Catatan</th>
+                <th class="px-4 py-3 text-left gb-no-print">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-if="gbActiveRecords.length === 0">
+                <tr><td colspan="9" class="text-center py-12 text-slate-400">Tiada rekod dalam proses.</td></tr>
+              </template>
+              <template x-for="(r, i) in gbActiveRecords" :key="r.id">
+                <tr class="border-t border-slate-100 hover:bg-slate-50" :class="r.hidden ? 'gb-row-hidden' : ''">
+                  <td class="px-4 py-3 text-slate-500" x-text="String(i+1).padStart(3,'0')"></td>
+                  <td class="px-4 py-3 font-medium text-slate-800" x-text="r.nama"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.ic"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="gbFmtDate(r.tarikhKeyIn)"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="gbFmtBulan(r.bulanProses)"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.arahanBy || '—'"></td>
+                  <td class="px-4 py-3">
+                    <span class="gb-badge" :style="`background:${gbStatusColor(r.status)}`" x-text="r.status"></span>
+                  </td>
+                  <td class="px-4 py-3 text-slate-500 text-xs max-w-[200px]" x-text="r.catatan || '—'"></td>
+                  <td class="px-4 py-3 gb-no-print whitespace-nowrap">
+                    <button @click="gbToggleHidden(r)" class="text-xs font-semibold text-amber-600 hover:text-amber-700 mr-2" x-text="r.hidden ? 'Papar' : 'Sembunyi'"></button>
+                    <button @click="gbOpenEdit(r)" class="text-xs font-semibold text-slate-500 hover:text-blue-600 mr-2">Edit</button>
+                    <button @click="gbDeleteRecord(r.id)" class="text-xs font-semibold text-slate-500 hover:text-red-600">Padam</button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table: Selesai -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm" x-show="!gbLoading">
+        <div class="px-4 py-3 border-b border-slate-100 font-semibold text-slate-700 text-sm">
+          Rekod Selesai <span class="text-slate-400 font-normal" x-text="`(${gbDoneRecords.length})`"></span>
+        </div>
+        <div class="table-scroll">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs font-bold text-slate-400 uppercase tracking-wide">
+              <tr>
+                <th class="px-4 py-3 text-left">#</th>
+                <th class="px-4 py-3 text-left">Nama</th>
+                <th class="px-4 py-3 text-left">No. IC</th>
+                <th class="px-4 py-3 text-left">Tarikh Key In</th>
+                <th class="px-4 py-3 text-left">Bulan Proses</th>
+                <th class="px-4 py-3 text-left">Arahan By</th>
+                <th class="px-4 py-3 text-left">Status</th>
+                <th class="px-4 py-3 text-left">Catatan</th>
+                <th class="px-4 py-3 text-left gb-no-print">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-if="gbDoneRecords.length === 0">
+                <tr><td colspan="9" class="text-center py-12 text-slate-400">Tiada rekod selesai.</td></tr>
+              </template>
+              <template x-for="(r, i) in gbDoneRecords" :key="r.id">
+                <tr class="border-t border-slate-100 hover:bg-slate-50" :class="r.hidden ? 'gb-row-hidden' : ''">
+                  <td class="px-4 py-3 text-slate-500" x-text="String(i+1).padStart(3,'0')"></td>
+                  <td class="px-4 py-3 font-medium text-slate-800" x-text="r.nama"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.ic"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="gbFmtDate(r.tarikhKeyIn)"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="gbFmtBulan(r.bulanProses)"></td>
+                  <td class="px-4 py-3 text-slate-600" x-text="r.arahanBy || '—'"></td>
+                  <td class="px-4 py-3">
+                    <span class="gb-badge" :style="`background:${gbStatusColor(r.status)}`" x-text="r.status"></span>
+                  </td>
+                  <td class="px-4 py-3 text-slate-500 text-xs max-w-[200px]" x-text="r.catatan || '—'"></td>
+                  <td class="px-4 py-3 gb-no-print whitespace-nowrap">
+                    <button @click="gbToggleHidden(r)" class="text-xs font-semibold text-amber-600 hover:text-amber-700 mr-2" x-text="r.hidden ? 'Papar' : 'Sembunyi'"></button>
+                    <button @click="gbOpenEdit(r)" class="text-xs font-semibold text-slate-500 hover:text-blue-600 mr-2">Edit</button>
+                    <button @click="gbDeleteRecord(r.id)" class="text-xs font-semibold text-slate-500 hover:text-red-600">Padam</button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /loggedIn -->
+
+  <!-- ══════════════════════════════
+       MODAL: Guru Baru — Tambah/Edit Rekod
+  ══════════════════════════════ -->
+  <div x-show="gbShowRecordModal" x-cloak
+    class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 gb-no-print"
+    @click.self="gbShowRecordModal = false">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <h3 class="text-lg font-bold text-slate-800 mb-4" x-text="gbEditId ? 'Edit Rekod' : 'Tambah Rekod'"></h3>
+
+      <div class="mb-3">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Nama</label>
+        <input type="text" x-model="gbForm.nama" placeholder="Nama penuh"
+          class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">No. IC</label>
+        <input type="text" x-model="gbForm.ic" placeholder="Contoh: 900101-06-5432"
+          class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Tarikh Data Key In</label>
+          <input type="date" x-model="gbForm.tarikhKeyIn"
+            class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Bulan Proses</label>
+          <input type="month" x-model="gbForm.bulanProses"
+            class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Arahan By</label>
+        <input type="text" x-model="gbForm.arahanBy" placeholder="Nama pegawai / rujukan arahan"
+          class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Status</label>
+        <select x-model="gbForm.status"
+          class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+          <template x-for="s in gbStatusOptions" :key="s.name">
+            <option :value="s.name" x-text="s.name"></option>
+          </template>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Catatan</label>
+        <textarea x-model="gbForm.catatan" rows="3" placeholder="Catatan tambahan (jika ada)"
+          class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button @click="gbShowRecordModal = false"
+          class="px-4 py-2 border border-slate-200 text-slate-600 font-semibold rounded-lg text-sm hover:bg-slate-50 transition">
+          Batal
+        </button>
+        <button @click="gbSaveRecord()" :disabled="gbLoading"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold rounded-lg text-sm transition">
+          Simpan
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="table-section">
-    <h2 class="section-title">Rekod Selesai <span id="countDone"></span></h2>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nama</th>
-            <th>No. IC</th>
-            <th>Tarikh Data Key In</th>
-            <th>Bulan Proses</th>
-            <th>Arahan By</th>
-            <th>Status</th>
-            <th>Catatan</th>
-            <th>Tindakan</th>
-          </tr>
-        </thead>
-        <tbody id="tableBodyDone"></tbody>
-      </table>
-      <div class="empty-state" id="emptyStateDone" style="display:none;">
-        <div class="glyph">&mdash;</div>
-        <div>Tiada rekod selesai.</div>
+  <!-- ══════════════════════════════
+       MODAL: Guru Baru — Urus Status
+  ══════════════════════════════ -->
+  <div x-show="gbShowStatusModal" x-cloak
+    class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 gb-no-print"
+    @click.self="gbShowStatusModal = false">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <h3 class="text-lg font-bold text-slate-800 mb-4">Urus Pilihan Status</h3>
+
+      <div class="flex flex-col gap-2 mb-4">
+        <template x-for="(s, idx) in gbStatusOptions" :key="s.name + idx">
+          <div class="flex items-center gap-2">
+            <span class="gb-status-dot" :style="`background:${s.color}`"></span>
+            <input type="text" :value="s.name"
+              @change="gbRenameStatus(idx, $event.target.value)"
+              class="flex-1 px-2 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+            <label class="flex items-center gap-1 text-xs text-slate-500 whitespace-nowrap">
+              <input type="checkbox" :checked="s.done" @change="gbToggleStatusDone(idx)">
+              Selesai
+            </label>
+            <button @click="gbRemoveStatus(idx)"
+              class="px-2 py-1 border border-slate-200 rounded-lg text-xs font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600 transition">
+              Buang
+            </button>
+          </div>
+        </template>
+      </div>
+
+      <div class="flex gap-2 mb-5">
+        <input type="text" x-model="gbNewStatusName" placeholder="Nama status baharu..."
+          class="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+        <button @click="gbAddStatus()"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition">
+          Tambah
+        </button>
+      </div>
+
+      <div class="flex justify-end">
+        <button @click="gbShowStatusModal = false"
+          class="px-4 py-2 border border-slate-200 text-slate-600 font-semibold rounded-lg text-sm hover:bg-slate-50 transition">
+          Tutup
+        </button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- MODAL: Add/Edit Record -->
-<div class="overlay" id="recordOverlay">
-  <div class="modal">
-    <h2 id="recordModalTitle">Tambah Rekod</h2>
-    <input type="hidden" id="recordId">
-    <div class="field">
-      <label>Nama</label>
-      <input type="text" id="fNama" placeholder="Nama penuh">
-    </div>
-    <div class="field">
-      <label>No. IC</label>
-      <input type="text" id="fIC" placeholder="Contoh: 900101-06-5432">
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Tarikh Data Key In</label>
-        <input type="date" id="fTarikhKeyIn">
-      </div>
-      <div class="field">
-        <label>Bulan Proses</label>
-        <input type="month" id="fBulanProses">
-      </div>
-    </div>
-    <div class="field">
-      <label>Arahan By</label>
-      <input type="text" id="fArahanBy" placeholder="Nama pegawai / rujukan arahan">
-    </div>
-    <div class="field">
-      <label>Status</label>
-      <select id="fStatus"></select>
-    </div>
-    <div class="field">
-      <label>Catatan</label>
-      <textarea id="fCatatan" rows="3" placeholder="Catatan tambahan (jika ada)"></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" id="btnCancelRecord">Batal</button>
-      <button class="btn btn-primary" id="btnSaveRecord">Simpan</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Manage Status -->
-<div class="overlay" id="statusOverlay">
-  <div class="modal">
-    <h2>Urus Pilihan Status</h2>
-    <div class="status-manage-list" id="statusManageList"></div>
-    <div class="add-status-row">
-      <input type="text" id="newStatusInput" placeholder="Nama status baharu...">
-      <button class="btn btn-primary btn-sm" id="btnAddStatus">Tambah</button>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" id="btnCloseStatus">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-<div class="loading-veil" id="loadingVeil">Memuatkan...</div>
-
-<script>
-/* ============================================================
- * KONFIGURASI — tukar URL Web App Apps Script BOBO di sini
- * ============================================================ */
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw9TDTzdx78H_GAQM3WuVX95q808YhUutI9BVOttfGT0QsLFIJm3mHWae3pGTvxysr6jQ/exec";
-
-const PALETTE = ['#B4483C','#C7912E','#3F8F5F','#3B6E91','#7A5FA6','#B87BA0','#5A7A3F','#8C6A45'];
-const BULAN_MS = ['JANUARI','FEBRUARI','MAC','APRIL','MEI','JUN','JULAI','OGOS','SEPTEMBER','OKTOBER','NOVEMBER','DISEMBER'];
-
-let records = [];
-let statusOptions = [];
-
-/* ---- API helper ---- */
-async function callApi(action, extra){
-  const payload = Object.assign({ action }, extra || {});
-  const res = await fetch(WEBAPP_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // elak CORS preflight pada Apps Script
-    body: JSON.stringify(payload)
-  });
-  if(!res.ok) throw new Error('Ralat rangkaian: ' + res.status);
-  return res.json();
-}
-
-function showLoading(on){
-  document.getElementById('loadingVeil').classList.toggle('show', on);
-}
-
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(showToast._h);
-  showToast._h = setTimeout(()=> t.classList.remove('show'), 2400);
-}
-
-/* ---- Login ---- */
-function isAuthed(){ return sessionStorage.getItem('gb_authed') === '1'; }
-
-async function doLogin(){
-  const pwd = document.getElementById('loginPassword').value;
-  const errEl = document.getElementById('loginError');
-  errEl.textContent = '';
-  if(!pwd){ errEl.textContent = 'Sila masukkan kata laluan.'; return; }
-
-  showLoading(true);
-  try{
-    const res = await callApi('login', { password: pwd });
-    if(res.success){
-      sessionStorage.setItem('gb_authed', '1');
-      showApp();
-    } else {
-      errEl.textContent = 'Kata laluan salah.';
-    }
-  }catch(e){
-    errEl.textContent = 'Ralat sambungan: ' + e.message;
-  }finally{
-    showLoading(false);
-  }
-}
-
-function showApp(){
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('mainApp').style.display = 'block';
-  loadAll();
-}
-
-document.getElementById('btnLogin').addEventListener('click', doLogin);
-document.getElementById('loginPassword').addEventListener('keydown', (e) => {
-  if(e.key === 'Enter') doLogin();
-});
-
-/* ---- Load data ---- */
-async function loadAll(){
-  showLoading(true);
-  try{
-    const [recRes, statRes] = await Promise.all([
-      callApi('getGuruBaru'),
-      callApi('getStatusGuruBaru')
-    ]);
-
-    if(recRes.success) records = recRes.data;
-    else showToast('Gagal muatkan rekod: ' + recRes.error);
-
-    if(statRes.success && statRes.data.length) statusOptions = statRes.data;
-    else statusOptions = [
-      { name:'Belum Proses', color:'#B4483C', done:false },
-      { name:'Dalam Proses', color:'#C7912E', done:false },
-      { name:'Siap', color:'#3F8F5F', done:true }
-    ];
-  }catch(e){
-    showToast('Ralat sambungan ke pelayan: ' + e.message);
-  }finally{
-    showLoading(false);
-  }
-
-  renderStatusSelects();
-  renderTable();
-  renderSummary();
-}
-
-function statusColor(name){
-  const found = statusOptions.find(s => s.name === name);
-  return found ? found.color : '#9AA0AC';
-}
-
-function renderStatusSelects(){
-  const fStatus = document.getElementById('fStatus');
-  const filterStatus = document.getElementById('filterStatus');
-  const currentFilter = filterStatus.value;
-
-  fStatus.innerHTML = statusOptions.map(s => `<option value="${escapeAttr(s.name)}">${escapeHtml(s.name)}</option>`).join('');
-  filterStatus.innerHTML = '<option value="">Semua Status</option>' +
-    statusOptions.map(s => `<option value="${escapeAttr(s.name)}">${escapeHtml(s.name)}</option>`).join('');
-  filterStatus.value = currentFilter;
-}
-
-function renderSummary(){
-  const wrap = document.getElementById('summaryCards');
-  let html = `
-    <div class="card" style="--card-accent:#1E2A4A">
-      <div class="num">${records.length}</div>
-      <div class="label">Jumlah Rekod</div>
-    </div>`;
-  statusOptions.forEach(s => {
-    const count = records.filter(r => r.status === s.name).length;
-    html += `
-      <div class="card" style="--card-accent:${s.color}">
-        <div class="num">${count}</div>
-        <div class="label">${escapeHtml(s.name)}</div>
-      </div>`;
-  });
-  wrap.innerHTML = html;
-}
-
-function fmtDate(d){
-  if(!d) return '&mdash;';
-  const parts = String(d).split('-');
-  if(parts.length !== 3) return d;
-  return `${parts[2]}/${parts[1]}/${parts[0]}`;
-}
-
-function fmtBulan(m){
-  if(!m) return '&mdash;';
-  const parts = String(m).split('-'); // YYYY-MM
-  if(parts.length !== 2) return m;
-  const idx = parseInt(parts[1], 10) - 1;
-  const nama = BULAN_MS[idx] || parts[1];
-  return `${nama} ${parts[0]}`;
-}
-
-function renderTable(){
-  const search = document.getElementById('searchInput').value.trim().toLowerCase();
-  const filterStatus = document.getElementById('filterStatus').value;
-
-  let filtered = records.filter(r => {
-    const matchSearch = !search || (r.nama||'').toLowerCase().includes(search) || (r.ic||'').toLowerCase().includes(search);
-    const matchStatus = !filterStatus || r.status === filterStatus;
-    return matchSearch && matchStatus;
-  });
-
-  filtered.sort((a,b) => (b.tarikhKeyIn || '').localeCompare(a.tarikhKeyIn || ''));
-
-  const isDone = (r) => {
-    const s = statusOptions.find(s => s.name === r.status);
-    return s ? !!s.done : false;
-  };
-
-  const activeRows = filtered.filter(r => !isDone(r));
-  const doneRows = filtered.filter(r => isDone(r));
-
-  document.getElementById('countActive').textContent = activeRows.length ? `(${activeRows.length})` : '';
-  document.getElementById('countDone').textContent = doneRows.length ? `(${doneRows.length})` : '';
-
-  renderSection(activeRows, 'tableBodyActive', 'emptyStateActive', 'Tiada rekod dalam proses.');
-  renderSection(doneRows, 'tableBodyDone', 'emptyStateDone', 'Tiada rekod selesai.');
-}
-
-function renderSection(rows, tbodyId, emptyId, emptyMsg){
-  const tbody = document.getElementById(tbodyId);
-  const emptyState = document.getElementById(emptyId);
-
-  if(rows.length === 0){
-    tbody.innerHTML = '';
-    emptyState.style.display = 'block';
-    emptyState.querySelector('div:last-child').textContent =
-      records.length === 0 ? 'Tiada rekod lagi. Klik "Tambah Rekod" untuk mula.' : emptyMsg;
-  } else {
-    emptyState.style.display = 'none';
-    tbody.innerHTML = rows.map((r, i) => `
-      <tr class="${r.hidden ? 'row-hidden-print' : ''}" title="${r.hidden ? 'Disembunyikan daripada cetakan' : ''}">
-        <td class="idx">${String(i+1).padStart(3,'0')}</td>
-        <td>${escapeHtml(r.nama)}</td>
-        <td>${escapeHtml(r.ic)}</td>
-        <td>${fmtDate(r.tarikhKeyIn)}</td>
-        <td>${fmtBulan(r.bulanProses)}</td>
-        <td>${escapeHtml(r.arahanBy || '')}</td>
-        <td><span class="badge" style="background:${statusColor(r.status)}">${escapeHtml(r.status)}</span></td>
-        <td class="catatan-cell">${escapeHtml(r.catatan || '')}</td>
-        <td class="row-actions">
-          <button class="hide-toggle" onclick="toggleHidden('${r.id}')">${r.hidden ? 'Papar' : 'Sembunyi'}</button>
-          <button onclick="openEditRecord('${r.id}')">Edit</button>
-          <button class="danger" onclick="deleteRecord('${r.id}')">Padam</button>
-        </td>
-      </tr>
-    `).join('');
-  }
-}
-
-function escapeHtml(str){
-  if(str === undefined || str === null) return '';
-  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function escapeAttr(str){ return escapeHtml(str); }
-
-/* ---- Hide toggle (cetak) ---- */
-window.toggleHidden = async function(id){
-  const r = records.find(x => x.id === id);
-  if(!r) return;
-  const newHidden = !r.hidden;
-
-  showLoading(true);
-  try{
-    const res = await callApi('updateGuruBaru', { data: { ...r, hidden: newHidden } });
-    if(res.success){
-      r.hidden = newHidden;
-      renderTable();
-      showToast(newHidden ? 'Rekod disembunyikan daripada cetakan.' : 'Rekod akan disertakan semula dalam cetakan.');
-    } else {
-      showToast('Gagal kemaskini: ' + res.error);
-    }
-  }catch(e){
-    showToast('Ralat sambungan: ' + e.message);
-  }finally{
-    showLoading(false);
-  }
-}
-
-/* ---- Record modal ---- */
-const recordOverlay = document.getElementById('recordOverlay');
-
-function openAddRecord(){
-  document.getElementById('recordModalTitle').textContent = 'Tambah Rekod';
-  document.getElementById('recordId').value = '';
-  document.getElementById('fNama').value = '';
-  document.getElementById('fIC').value = '';
-  document.getElementById('fTarikhKeyIn').value = new Date().toISOString().slice(0,10);
-  document.getElementById('fBulanProses').value = '';
-  document.getElementById('fArahanBy').value = '';
-  document.getElementById('fStatus').value = statusOptions[0]?.name || '';
-  document.getElementById('fCatatan').value = '';
-  recordOverlay.classList.add('show');
-}
-
-window.openEditRecord = function(id){
-  const r = records.find(x => x.id === id);
-  if(!r) return;
-  document.getElementById('recordModalTitle').textContent = 'Edit Rekod';
-  document.getElementById('recordId').value = r.id;
-  document.getElementById('fNama').value = r.nama;
-  document.getElementById('fIC').value = r.ic;
-  document.getElementById('fTarikhKeyIn').value = r.tarikhKeyIn || '';
-  document.getElementById('fBulanProses').value = r.bulanProses || '';
-  document.getElementById('fArahanBy').value = r.arahanBy || '';
-  document.getElementById('fStatus').value = r.status;
-  document.getElementById('fCatatan').value = r.catatan || '';
-  recordOverlay.classList.add('show');
-}
-
-window.deleteRecord = async function(id){
-  if(!confirm('Padam rekod ini?')) return;
-
-  showLoading(true);
-  try{
-    const res = await callApi('deleteGuruBaru', { id });
-    if(res.success){
-      records = records.filter(r => r.id !== id);
-      renderTable();
-      renderSummary();
-      showToast('Rekod dipadam.');
-    } else {
-      showToast('Gagal padam: ' + res.error);
-    }
-  }catch(e){
-    showToast('Ralat sambungan: ' + e.message);
-  }finally{
-    showLoading(false);
-  }
-}
-
-document.getElementById('btnAdd').addEventListener('click', openAddRecord);
-document.getElementById('btnCancelRecord').addEventListener('click', () => recordOverlay.classList.remove('show'));
-
-document.getElementById('btnSaveRecord').addEventListener('click', async () => {
-  const nama = document.getElementById('fNama').value.trim();
-  const ic = document.getElementById('fIC').value.trim();
-  if(!nama || !ic){
-    showToast('Sila isi Nama dan No. IC.');
-    return;
-  }
-  const id = document.getElementById('recordId').value;
-  const data = {
-    nama,
-    ic,
-    tarikhKeyIn: document.getElementById('fTarikhKeyIn').value,
-    bulanProses: document.getElementById('fBulanProses').value,
-    arahanBy: document.getElementById('fArahanBy').value.trim(),
-    status: document.getElementById('fStatus').value,
-    catatan: document.getElementById('fCatatan').value.trim()
-  };
-
-  showLoading(true);
-  try{
-    if(id){
-      const existing = records.find(r => r.id === id);
-      const res = await callApi('updateGuruBaru', { data: { ...existing, ...data, id } });
-      if(res.success){
-        const idx = records.findIndex(r => r.id === id);
-        records[idx] = { ...records[idx], ...data };
-      } else {
-        showToast('Gagal simpan: ' + res.error);
-        return;
-      }
-    } else {
-      const res = await callApi('saveGuruBaru', { data });
-      if(res.success){
-        records.push({ id: res.id, hidden: false, ...data });
-      } else {
-        showToast('Gagal simpan: ' + res.error);
-        return;
-      }
-    }
-
-    renderTable();
-    renderSummary();
-    recordOverlay.classList.remove('show');
-    showToast('Rekod disimpan.');
-  }catch(e){
-    showToast('Ralat sambungan: ' + e.message);
-  }finally{
-    showLoading(false);
-  }
-});
-
-/* ---- Status modal ---- */
-const statusOverlay = document.getElementById('statusOverlay');
-
-async function persistStatusOptions(){
-  const res = await callApi('saveStatusGuruBaru', { data: statusOptions });
-  if(!res.success) showToast('Gagal simpan status: ' + res.error);
-  return res.success;
-}
-
-function renderStatusManageList(){
-  const list = document.getElementById('statusManageList');
-  list.innerHTML = statusOptions.map((s, i) => `
-    <div class="status-manage-row">
-      <span class="status-dot" style="background:${s.color}"></span>
-      <input type="text" value="${escapeAttr(s.name)}" data-idx="${i}" class="status-name-input">
-      <label class="status-done-label">
-        <input type="checkbox" data-idx="${i}" class="status-done-checkbox" ${s.done ? 'checked' : ''}>
-        Selesai
-      </label>
-      <button class="btn btn-ghost btn-sm" onclick="removeStatus(${i})">Buang</button>
-    </div>
-  `).join('');
-
-  list.querySelectorAll('.status-name-input').forEach(inp => {
-    inp.addEventListener('change', async (e) => {
-      const idx = parseInt(e.target.dataset.idx);
-      const oldName = statusOptions[idx].name;
-      const newName = e.target.value.trim();
-      if(!newName) { e.target.value = oldName; return; }
-
-      showLoading(true);
-      statusOptions[idx].name = newName;
-      const ok = await persistStatusOptions();
-      if(ok){
-        records.forEach(r => { if(r.status === oldName) r.status = newName; });
-        renderStatusSelects();
-        renderTable();
-        renderSummary();
-        showToast('Status dikemaskini.');
-      }
-      showLoading(false);
-    });
-  });
-
-  list.querySelectorAll('.status-done-checkbox').forEach(cb => {
-    cb.addEventListener('change', async (e) => {
-      const idx = parseInt(e.target.dataset.idx);
-      showLoading(true);
-      statusOptions[idx].done = e.target.checked;
-      const ok = await persistStatusOptions();
-      if(ok){
-        renderTable();
-        renderSummary();
-        showToast('Status dikemaskini.');
-      }
-      showLoading(false);
-    });
-  });
-}
-
-window.removeStatus = async function(idx){
-  if(statusOptions.length <= 1){
-    showToast('Perlu ada sekurang-kurangnya satu status.');
-    return;
-  }
-  const name = statusOptions[idx].name;
-  const inUse = records.some(r => r.status === name);
-  if(inUse && !confirm(`Status "${name}" digunakan oleh rekod sedia ada. Buang juga?`)) return;
-
-  showLoading(true);
-  const removed = statusOptions.splice(idx, 1);
-  const ok = await persistStatusOptions();
-  if(!ok) statusOptions.splice(idx, 0, removed[0]);
-  else {
-    renderStatusManageList();
-    renderStatusSelects();
-    renderTable();
-    renderSummary();
-    showToast('Status dibuang.');
-  }
-  showLoading(false);
-}
-
-document.getElementById('btnManageStatus').addEventListener('click', () => {
-  renderStatusManageList();
-  statusOverlay.classList.add('show');
-});
-document.getElementById('btnCloseStatus').addEventListener('click', () => statusOverlay.classList.remove('show'));
-
-document.getElementById('btnAddStatus').addEventListener('click', async () => {
-  const input = document.getElementById('newStatusInput');
-  const name = input.value.trim();
-  if(!name) return;
-  if(statusOptions.some(s => s.name.toLowerCase() === name.toLowerCase())){
-    showToast('Status ini sudah wujud.');
-    return;
-  }
-  const color = PALETTE[statusOptions.length % PALETTE.length];
-
-  showLoading(true);
-  statusOptions.push({ name, color, done: /siap|selesai/i.test(name) });
-  const ok = await persistStatusOptions();
-  if(!ok) statusOptions.pop();
-  else {
-    input.value = '';
-    renderStatusManageList();
-    renderStatusSelects();
-    renderSummary();
-    showToast('Status ditambah.');
-  }
-  showLoading(false);
-});
-
-/* ---- Print ---- */
-document.getElementById('btnPrint').addEventListener('click', () => {
-  window.print();
-});
-
-/* ---- Search / filter ---- */
-document.getElementById('searchInput').addEventListener('input', renderTable);
-document.getElementById('filterStatus').addEventListener('change', renderTable);
-
-/* ---- Close overlays on backdrop click ---- */
-[recordOverlay, statusOverlay].forEach(ov => {
-  ov.addEventListener('click', (e) => {
-    if(e.target === ov) ov.classList.remove('show');
-  });
-});
-
-/* ---- Bootstrap ---- */
-if(isAuthed()){
-  showApp();
-} else {
-  document.getElementById('loginScreen').style.display = 'flex';
-}
-</script>
 </body>
 </html>
