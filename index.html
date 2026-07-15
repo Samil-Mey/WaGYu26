@@ -19,9 +19,6 @@
     .gb-badge{ display:inline-block; padding:3px 10px; border-radius:9999px; font-size:11px; font-weight:600; color:#fff; white-space:nowrap; }
     tr.gb-row-hidden{ opacity:0.5; }
     @media print{
-      body *{ visibility:hidden; }
-      #gbPrintArea, #gbPrintArea *{ visibility:visible; }
-      #gbPrintArea{ position:absolute; left:0; top:0; width:100%; }
       .gb-no-print{ display:none !important; }
     }
   </style>
@@ -248,7 +245,7 @@
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
 
         <!-- Filter Bar -->
-        <div class="p-4 border-b border-slate-100 flex flex-wrap gap-3">
+        <div class="p-4 border-b border-slate-100 flex flex-wrap gap-3 gb-no-print">
           <input type="text" x-model="searchQ" placeholder="🔍 Cari nama, IC, No.Per..."
             class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-full sm:w-64">
           <select x-model="filterStatus"
@@ -265,6 +262,10 @@
               <option :value="k" x-text="k"></option>
             </template>
           </select>
+          <button @click="window.print()"
+            class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+            🖨️ Cetak / PDF
+          </button>
           <button @click="loadData()"
             class="ml-auto px-4 py-2 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
             🔄 Muat Semula
@@ -340,7 +341,7 @@
     <!-- ══════════════════════════════
          TAB: GURU BARU (add-on)
     ══════════════════════════════ -->
-    <div x-show="activeTab === 'guru'" class="max-w-6xl mx-auto px-4 py-6" id="gbPrintArea">
+    <div x-show="activeTab === 'guru'" class="max-w-6xl mx-auto px-4 py-6">
 
       <!-- Header row -->
       <div class="flex flex-wrap items-center justify-between gap-3 mb-5 gb-no-print">
